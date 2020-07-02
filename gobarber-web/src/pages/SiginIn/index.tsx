@@ -1,12 +1,13 @@
 /* eslint-disable @typescript-eslint/ban-types */
 /* eslint-disable no-unused-expressions */
-import React, { useRef, useCallback } from 'react';
+import React, { useRef, useCallback, useContext } from 'react';
 import { Link } from 'react-router-dom';
 import { FiLogIn, FiMail, FiLock } from 'react-icons/fi';
 import * as Yup from 'yup';
 import { FormHandles } from '@unform/core';
 import { Form } from '@unform/web';
 
+import AuthContext from '../../context/AuthContext';
 import getValidationErrors from '../../utils/getValidationsErrors';
 
 import logoImg from '../../assets/logo.svg';
@@ -18,6 +19,10 @@ import { Container, Background, Content } from './styles';
 
 const SignIn: React.FC = () => {
   const formRef = useRef<FormHandles>(null);
+
+  const { name } = useContext(AuthContext);
+  console.log(name);
+
   const handleSubmit = useCallback(async (data: object) => {
     try {
       formRef.current?.setErrors({});
