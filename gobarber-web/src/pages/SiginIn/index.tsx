@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/ban-types */
 /* eslint-disable no-unused-expressions */
 import React, { useRef, useCallback } from 'react';
 import { Link } from 'react-router-dom';
@@ -7,7 +6,8 @@ import * as Yup from 'yup';
 import { FormHandles } from '@unform/core';
 import { Form } from '@unform/web';
 
-import { useAuth } from '../../hooks/AuthContext';
+import { useAuth } from '../../hooks/auth';
+import { useToast } from '../../hooks/toast';
 import getValidationErrors from '../../utils/getValidationsErrors';
 
 import logoImg from '../../assets/logo.svg';
@@ -26,6 +26,7 @@ const SignIn: React.FC = () => {
   const formRef = useRef<FormHandles>(null);
 
   const { signIn } = useAuth();
+  const { addToast } = useToast();
 
   const handleSubmit = useCallback(
     async (data: SignInFormData) => {
@@ -42,17 +43,25 @@ const SignIn: React.FC = () => {
           abortEarly: false,
         });
 
-        signIn({
+        await signIn({
           email: data.email,
           password: data.password,
         });
       } catch (error) {
-        const errors = getValidationErrors(error);
+        if (error instanceof Yup.ValidationError) {
+          const errors = getValidationErrors(error);
 
-        formRef.current?.setErrors(errors);
+          formRef.current?.setErrors(errors);
+        }
+
+        addToast({
+          title: 'Erro na autenticação',
+          description: 'Ocorreu um erro ao fazer login, cheque as credenciais.',
+          type: 'error',
+        });
       }
     },
-    [signIn],
+    [signIn, addToast],
   );
   return (
     <Container>
