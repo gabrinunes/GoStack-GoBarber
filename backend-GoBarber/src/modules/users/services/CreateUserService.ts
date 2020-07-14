@@ -1,6 +1,7 @@
+/* eslint-disable import/no-unresolved */
 import { getRepository } from 'typeorm';
 import { hash } from 'bcryptjs';
-import AppError from '../../../shared/errors/AppError';
+import AppError from '@shared/errors/AppError';
 
 import User from '../infra/typeorm/entities/User';
 

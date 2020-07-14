@@ -1,8 +1,9 @@
+/* eslint-disable import/no-unresolved */
 import { Request, Response, NextFunction } from 'express';
 import { verify } from 'jsonwebtoken';
-import AppError from '../../../errors/AppError';
+import AppError from '@shared/errors/AppError';
 
-import authConfig from '../../../../config/auth';
+import authConfig from '@config/auth';
 
 interface TokenPayload {
     iat: number;
