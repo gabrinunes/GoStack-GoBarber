@@ -1,3 +1,5 @@
+/* eslint-disable import/prefer-default-export */
+
 import { MigrationInterface, QueryRunner, Table } from 'typeorm';
 
 export default class CreateAppointments1592954199667
