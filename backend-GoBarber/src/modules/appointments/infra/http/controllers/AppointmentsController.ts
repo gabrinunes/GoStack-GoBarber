@@ -9,6 +9,7 @@ export default class AppointmentController {
         request: Request,
         response: Response,
     ): Promise<Response> {
+        const user_id = request.user.id;
         const { provider_id, date } = request.body;
 
         const parsedDate = parseISO(date);
@@ -18,6 +19,7 @@ export default class AppointmentController {
         const appoitment = await createAppointment.execute({
             date: parsedDate,
             provider_id,
+            user_id,
         });
         return response.json(appoitment);
     }
