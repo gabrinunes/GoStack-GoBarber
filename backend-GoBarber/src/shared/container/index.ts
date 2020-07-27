@@ -1,4 +1,5 @@
 /* eslint-disable import/no-unresolved */
+import { container } from 'tsyringe';
 
 import '@modules/users/providers';
 import './providers';
@@ -12,7 +13,8 @@ import IUsersRepository from '@modules/users/repositories/IUsersRepository';
 import IUserTokensRepository from '@modules/users/repositories/IUsersTokenRepository';
 import UserTokensRepository from '@modules/users/infra/typeorm/repositories/UserTokensRepository';
 
-import { container } from 'tsyringe';
+import INotifcationsRepository from '@modules/notifications/repositories/INotificationsRepository';
+import NotificationsRepository from '@modules/notifications/infra/typeorm/repositories/NotificationsRepository';
 
 container.registerSingleton<IAppointmentsRepository>(
     'AppointmentsRepository',
@@ -27,4 +29,9 @@ container.registerSingleton<IUsersRepository>(
 container.registerSingleton<IUserTokensRepository>(
     'UserTokensRepository',
     UserTokensRepository,
+);
+
+container.registerSingleton<INotifcationsRepository>(
+    'NotificationsRepository',
+    NotificationsRepository,
 );
