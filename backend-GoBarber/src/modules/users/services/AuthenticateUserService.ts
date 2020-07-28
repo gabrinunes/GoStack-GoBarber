@@ -4,8 +4,7 @@ import { injectable, inject } from 'tsyringe';
 import AppError from '@shared/errors/AppError';
 import authConfig from '@config/auth';
 import IUsersRepository from '../repositories/IUsersRepository';
-import IHashProvider from '../providers/HashProvider/models/IHashProvider'
-
+import IHashProvider from '../providers/HashProvider/models/IHashProvider';
 
 import User from '../infra/typeorm/entities/User';
 
@@ -36,7 +35,10 @@ class AuthenticateUserService {
             throw new AppError('Incorrect email/password combination', 401);
         }
 
-        const passwordMatched = await this.hashProvider.compareHash(password, user.password);
+        const passwordMatched = await this.hashProvider.compareHash(
+            password,
+            user.password,
+        );
 
         if (!passwordMatched) {
             throw new AppError('Incorrect email/password combination', 401);
@@ -44,7 +46,7 @@ class AuthenticateUserService {
 
         const { expiresIn, secret } = authConfig.jwt;
 
-        const token = sign({}, secret, {
+        const token = sign({}, `${secret}`, {
             subject: user.id,
             expiresIn,
         });
