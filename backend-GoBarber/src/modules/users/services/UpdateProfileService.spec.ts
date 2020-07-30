@@ -39,8 +39,8 @@ describe('CreateUser', () => {
         expect(
             updateProfile.execute({
                 user_id: 'user-no-exists',
-                name:'Test',
-                email:'test@example.com',
+                name: 'Test',
+                email: 'test@example.com',
             }),
         ).rejects.toBeInstanceOf(AppError);
     });

@@ -1,23 +1,29 @@
+/* eslint-disable import/no-unresolved */
 import AppError from '@shared/errors/AppError';
 
+import FakeCacheProvider from '@shared/container/providers/CacheProvider/fakes/FakeCacheProvider';
 import FakeUsersRepository from '../repositories/fakes/FakeUsersRepository';
 import FakeHashProvider from '../providers/HashProvider/fakes/FakeHashProvider';
+
 import AuthtenticateUserService from './AuthenticateUserService';
 import CreateUserService from './CreateUserService';
 
 let fakeUsersRepository: FakeUsersRepository;
 let fakeHashProvider: FakeHashProvider;
+let fakeCacheProvider: FakeCacheProvider;
 let authtenticateUser: AuthtenticateUserService;
 let createUser: CreateUserService;
 
 describe('CreateUser', () => {
     beforeEach(() => {
         fakeUsersRepository = new FakeUsersRepository();
+        fakeCacheProvider = new FakeCacheProvider();
         fakeHashProvider = new FakeHashProvider();
 
         createUser = new CreateUserService(
             fakeUsersRepository,
             fakeHashProvider,
+            fakeCacheProvider,
         );
         authtenticateUser = new AuthtenticateUserService(
             fakeUsersRepository,
