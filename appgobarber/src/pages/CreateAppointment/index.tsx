@@ -33,12 +33,18 @@ export interface Provider {
   avatar_url: string;
 }
 
+interface AvailabilityItem {
+  hour: number;
+  available: boolean;
+}
+
 const CreateAppointment: React.FC = () => {
   const { user } = useAuth();
   const route = useRoute();
   const { goBack } = useNavigation();
   const routeParams = route.params as RouteParams;
 
+  const [availability, setAvailability] = useState<AvailabilityItem>([]);
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [providers, setProviders] = useState<Provider>([]);
@@ -47,10 +53,24 @@ const CreateAppointment: React.FC = () => {
   );
 
   useEffect(() => {
-    api.get('providers').then(response => {
+    api.get('providers').then((response) => {
       setProviders(response.data);
     });
   }, []);
+
+  useEffect(() => {
+    api
+      .get(`providers/${selectedProvider}/day-availability`, {
+        params: {
+          year: selectedDate.getFullYear(),
+          month: selectedDate.getMonth() + 1,
+          day: selectedDate.getDate(),
+        },
+      })
+      .then((response) => {
+        setAvailability(response.data);
+      });
+  }, [selectedDate, selectedProvider]);
 
   const navigateBack = useCallback(() => {
     goBack();
@@ -61,7 +81,7 @@ const CreateAppointment: React.FC = () => {
   }, []);
 
   const handleToggleDatePicker = useCallback(() => {
-    setShowDatePicker(state => !state);
+    setShowDatePicker((state) => !state);
   }, []);
 
   const handleDateChanged = useCallback(
@@ -93,7 +113,7 @@ const CreateAppointment: React.FC = () => {
           horizontal
           showsHorizontalScrollIndicator={false}
           data={providers}
-          keyExtractor={(provider) => provider.id}
+          keyExtractor={provider => provider.id}
           renderItem={({ item: provider }) => (
             <ProviderContainer
               onPress={() => handleSelectProvider(provider.id)}
