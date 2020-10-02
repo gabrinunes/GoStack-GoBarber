@@ -21,9 +21,7 @@ import Input from '../../components/Input';
 import Button from '../../components/Button';
 import LogoImg from '../../assets/Logo.png';
 
-import {
- Container, Title, BackToSignIn, BackToSignInText
-} from './styles';
+import { Container, Title, BackToSignIn, BackToSignInText } from './styles';
 
 interface SingnUpFormData {
   name: string;
