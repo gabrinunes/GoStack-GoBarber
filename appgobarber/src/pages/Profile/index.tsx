@@ -1,3 +1,4 @@
+/* eslint-disable arrow-parens */
 /* eslint-disable camelcase */
 /* eslint-disable no-unused-expressions */
 import React, { useRef, useCallback } from 'react';
@@ -12,6 +13,7 @@ import {
 import { useNavigation } from '@react-navigation/native';
 import * as Yup from 'yup';
 import Icon from 'react-native-vector-icons/Feather';
+import ImagePicker from 'react-native-image-picker';
 import { Form } from '@unform/mobile';
 import { FormHandles } from '@unform/core';
 import { useAuth } from '../../hooks/auth';
@@ -64,13 +66,13 @@ const SignUp: React.FC = () => {
             .email('Digite um e-mail válido'),
           old_password: Yup.string(),
           password: Yup.string().when('old_password', {
-            is: (val) => !!val.length,
+            is: val => !!val.length,
             then: Yup.string().required('Campo obrigatório'),
             otherwise: Yup.string(),
           }),
           password_confirmation: Yup.string()
             .when('old_password', {
-              is: (val) => !!val.length,
+              is: val => !!val.length,
               then: Yup.string().required('Campo Obrigatório'),
               otherwise: Yup.string(),
             })
@@ -89,10 +91,10 @@ const SignUp: React.FC = () => {
           email,
           ...(old_password
             ? {
-                old_password,
-                password,
-                password_confirmation,
-              }
+              old_password,
+              password,
+              password_confirmation,
+            }
             : {}),
         };
         const response = await api.put('/profile', formData);
@@ -117,6 +119,43 @@ const SignUp: React.FC = () => {
     [navigation],
   );
 
+  const handleUpdateAvatar = useCallback(() => {
+    ImagePicker.showImagePicker(
+      {
+        title: 'Selecione um avatar',
+        cancelButtonTitle: 'Cancelar',
+        takePhotoButtonTitle: 'Usar câmera',
+        chooseFromLibraryButtonTitle: 'Escolher da galeria',
+      },
+      response => {
+        if (response.didCancel) {
+          return;
+        }
+
+        if (response.error) {
+          Alert.alert('Erro ao atualizar seu avatar');
+          return;
+        }
+        const data = new FormData();
+
+        data.append('avatar', {
+          type: 'image/jpeg',
+          name: `${user.id}.jpg`,
+          uri: response.uri,
+        });
+
+        api
+          .patch('/users/avatar', data)
+          .then(apiResponse => {
+            updateUser(apiResponse.data);
+          })
+          .catch(error => {
+            console.log(error);
+          });
+      },
+    );
+  }, [updateUser, user.id]);
+
   return (
     <>
       <KeyboardAvoidingView
@@ -129,7 +168,7 @@ const SignUp: React.FC = () => {
               <Icon name="chevron-left" size={24} color="#999591" />
             </BackButton>
 
-            <UserAvatarButton onPress={() => {}}>
+            <UserAvatarButton onPress={handleUpdateAvatar}>
               <UserAvatar source={{ uri: user.avatar_url }} />
             </UserAvatarButton>
 
